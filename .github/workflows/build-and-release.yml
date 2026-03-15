@@ -45,7 +45,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
-          pip install "nuclear_data_to_yamc_format>=0.1.2"
+          pip install "nuclear_data_to_yamc_format>=0.1.3"
           pip install --extra-index-url https://shimwell.github.io/wheels openmc
 
       - name: Determine TENDL release
