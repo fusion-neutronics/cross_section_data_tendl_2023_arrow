@@ -17,7 +17,7 @@ Grab the latest release artifact from the [Releases](https://github.com/fusion-n
 ### Install system packages
 
 ```bash
-sudo apt-get install -y cmake gfortran git
+sudo apt-get install -y cmake gfortran git gh
 ```
 
 ### Build and install NJOY2016
@@ -52,16 +52,20 @@ To convert a single nuclide for testing:
 convert-tendl --release 2023 --nuclides Fe56
 ```
 
-### Compress and upload to a release
+### Compress each nuclide and upload to a release
 
 ```bash
-tar -czf tendl-2023-arrow.tar.gz tendl-2023-arrow/
-gh release upload <TAG> tendl-2023-arrow.tar.gz \
+cd tendl-2023-arrow/neutron
+for d in *.arrow; do
+  tar -cf "${d}.tar" "$d"
+done
+gh release upload <TAG> *.arrow.tar \
   --repo fusion-neutronics/cross_section_data_tendl_2021_arrow \
   --clobber
+cd ../..
 ```
 
-Replace `<TAG>` with the release tag (e.g. `0.0.7`).
+Replace `<TAG>` with the release tag (e.g. `0.0.8`). This uploads each nuclide as a separate uncompressed tar (e.g. `Fe56.arrow.tar`, `U235.arrow.tar`).
 
 ### Clean up source files
 
