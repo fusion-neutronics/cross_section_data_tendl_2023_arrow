@@ -4,7 +4,7 @@ Pre-built TENDL nuclear cross section data in Apache Arrow IPC format, converted
 
 ## Download
 
-Grab the latest release artifact from the [Releases](https://github.com/fusion-neutronics/cross_section_data_tendl_2021_arrow/releases) page.
+Grab the latest release artifact from the [Releases](https://github.com/fusion-neutronics/cross_section_data_tendl_2023_arrow/releases) page.
 
 ## Building locally
 
@@ -60,7 +60,7 @@ for d in *.arrow; do
   tar -cf "${d}.tar" "$d"
 done
 gh release upload <TAG> *.arrow.tar \
-  --repo fusion-neutronics/cross_section_data_tendl_2021_arrow \
+  --repo fusion-neutronics/cross_section_data_tendl_2023_arrow \
   --clobber
 cd ../..
 ```
