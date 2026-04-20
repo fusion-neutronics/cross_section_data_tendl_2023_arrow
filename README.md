@@ -34,7 +34,7 @@ cd ../..
 ### Install Python dependencies
 
 ```bash
-pip install "nuclear_data_to_yamc_format>=0.1.3"
+pip install nuclear_data_to_yamc_format
 pip install --extra-index-url https://shimwell.github.io/wheels openmc
 ```
 
@@ -55,17 +55,19 @@ convert-tendl --release 2023 --nuclides Fe56
 ### Compress each nuclide and upload to a release
 
 ```bash
+export TAG=1.0.0
+
 cd tendl-2023-arrow/neutron
 for d in *.arrow; do
   tar -cf "${d}.tar" "$d"
 done
-gh release upload <TAG> *.arrow.tar \
+gh release upload $TAG *.arrow.tar \
   --repo fusion-neutronics/cross_section_data_tendl_2023_arrow \
   --clobber
 cd ../..
 ```
 
-Replace `<TAG>` with the release tag (e.g. `0.0.8`). This uploads each nuclide as a separate uncompressed tar (e.g. `Fe56.arrow.tar`, `U235.arrow.tar`).
+This uploads each nuclide as a separate uncompressed tar (e.g. `Fe56.arrow.tar`, `U235.arrow.tar`).
 
 ### Clean up source files
 
