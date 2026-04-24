@@ -43,12 +43,26 @@ pip install --extra-index-url https://shimwell.github.io/wheels openmc
 From the repo root:
 
 ```bash
-./build_release.sh            # build cross sections and tar each nuclide
-./build_release.sh 1.0.0      # same, then upload every .arrow.tar to release tag 1.0.0
+./build_release.sh            # build cross sections and tar each arrow file/folder
+./build_release.sh 1.0.0      # same, then upload every .arrow.tar (and index.txt) to release tag 1.0.0
 TAG=1.0.0 ./build_release.sh  # same as above, via env var
 ```
 
-Without a tag the script stops after producing the `.arrow.tar` files (under `tendl-2023-arrow/neutron/`) so you can upload manually. With a tag it runs `gh release upload ... --clobber` for you.
+Example — build and upload to the existing `1.0.0` tag:
+
+```bash
+gh auth login                 # one-time, if not already authenticated
+./build_release.sh 1.0.0
+```
+
+This produces one tar per `.arrow` file/folder (TENDL is neutron-only):
+
+- `tendl-2023-arrow/neutron/*.arrow.tar` — one per neutron nuclide
+- `tendl-2023-arrow/index.txt` — list of nuclides included
+
+Without a tag the script stops after producing the artifacts so you can upload manually. With a tag it runs `gh release upload ... --clobber` for each tar plus `index.txt`.
+
+**Resumable builds.** `convert-tendl` skips any nuclide whose `{Nuclide}.arrow/version.json` already exists, so re-running `build_release.sh` after a crash or partial run only processes what's missing — the per-nuclide NJOY step is the slow one (hours for the full set). To force reconversion of a nuclide, delete its `.arrow` folder and re-run, or pass `--force` to `convert-tendl` directly. Downloads are also resumable — each archive is written via a `.part` sidecar and only promoted to its final name after a complete transfer, so an interrupted download never leaves a truncated cache that a later run would mistakenly reuse.
 
 To convert a single nuclide for testing:
 

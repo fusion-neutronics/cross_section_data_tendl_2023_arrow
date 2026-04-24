@@ -16,16 +16,16 @@ GH_REPO="fusion-neutronics/cross_section_data_tendl_2023_arrow"
 echo "==> converting TENDL 2023 neutron data into $OUT_DIR/"
 convert-tendl --release 2023
 
-tar_nuclides () {
+tar_arrows () {
   local dir="$1"
-  echo "==> tarring nuclides in $dir"
+  echo "==> tarring arrow files/folders in $dir"
   (
     cd "$dir"
     shopt -s nullglob
     for d in *.arrow; do tar -cf "${d}.tar" "$d"; done
   )
 }
-tar_nuclides "$OUT_DIR/neutron"
+tar_arrows "$OUT_DIR/neutron"
 
 echo
 echo "Done. Artifacts ready under $OUT_DIR/."
@@ -33,11 +33,16 @@ echo "Done. Artifacts ready under $OUT_DIR/."
 if [[ -n "$TAG" ]]; then
   echo
   echo "==> uploading to release $TAG on $GH_REPO"
-  gh release upload "$TAG" "$OUT_DIR"/neutron/*.arrow.tar --repo "$GH_REPO" --clobber
+  shopt -s nullglob
+  neutron_tars=("$OUT_DIR"/neutron/*.arrow.tar)
+  shopt -u nullglob
+  [[ ${#neutron_tars[@]} -gt 0 ]] && gh release upload "$TAG" "${neutron_tars[@]}" --repo "$GH_REPO" --clobber
+  [[ -f "$OUT_DIR/index.txt" ]] && gh release upload "$TAG" "$OUT_DIR/index.txt" --repo "$GH_REPO" --clobber
   echo "==> upload complete"
 else
   echo
   echo "No TAG given. To upload, re-run with a tag (./build_release.sh <TAG>) or:"
   echo "  export TAG=<your-tag>"
   echo "  gh release upload \$TAG $OUT_DIR/neutron/*.arrow.tar --repo $GH_REPO --clobber"
+  echo "  gh release upload \$TAG $OUT_DIR/index.txt           --repo $GH_REPO --clobber"
 fi
